@@ -1,0 +1,42 @@
+# part A
+def problem_a(A: list[float], B: list[float], tmin: float, tmax: float) -> int:
+    count = 0
+    A = sorted(A)
+    B = sorted(B)
+    # j >= l, A[i] + B[j] >= tmin 
+    # j <= r, A[i] + B[j] <= tmax
+    r, l = len(B) - 1, len(B)
+    for x in A:
+        while l - 1 >= 0 and x + B[l - 1] >= tmin:
+            l -= 1
+        while r >= 0 and x + B[r] > tmax:
+            r -= 1
+        count += max(r - l + 1, 0)
+    return count
+
+
+def problem_b(A: list[float], tmin: float, tmax: float) -> int:
+    if not A:
+        return 0
+    if len(A) == 1:
+        return 1 if A[0] >= tmin and A[0] <= tmax else 0
+    lsum, rsum = problem_b(A[:len(A) // 2], tmin, tmax), problem_b(A[len(A) // 2:], tmin, tmax)
+    S = [0] * (len(A) + 1)
+    for i, x in enumerate(A):
+        S[i + 1] = x + S[i]
+    T = [-x for i, x in enumerate(S) if i < (len(A) // 2)]
+    S = S[len(A) // 2 + 1:]
+    crsum = problem_a(S, T, tmin, tmax)
+    return lsum + rsum + crsum
+
+
+def main():
+    A = [-1, 1]
+    tmin, tmax = 0, 10
+    print(problem_b(A, tmin, tmax))
+    print(problem_a([-4, -4, 3], [-3, -4 , 2,0], 8, 20))
+    # print(problem_b([-3, -4, 2, 0], -4, 3))
+
+
+if __name__ == "__main__":
+    main()
