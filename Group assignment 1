@@ -1,19 +1,24 @@
-# part A
+'''
+    This file contains the template for Assignment1.  For testing it, I will place it
+    in a different directory, call the function <number_of_allowable_intervals>, and check
+    its output. So, you can add/remove  whatever you want to/from this file.  But, don't
+    change the name of the file or the name/signature of the following function.
+
+    Also, I will use <python3> to run this code.
+'''
+
 def problem_a(A: list[float], B: list[float], tmin: float, tmax: float) -> int:
     count = 0
     A = sorted(A)
     B = sorted(B)
-    # j >= l, A[i] + B[j] >= tmin 
-    # j <= r, A[i] + B[j] <= tmax
     r, l = len(B) - 1, len(B)
     for x in A:
         while l - 1 >= 0 and x + B[l - 1] >= tmin:
-            l -= 1
+            l -= 1 
         while r >= 0 and x + B[r] > tmax:
             r -= 1
         count += max(r - l + 1, 0)
     return count
-
 
 def problem_b(A: list[float], tmin: float, tmax: float) -> int:
     if not A:
@@ -24,19 +29,20 @@ def problem_b(A: list[float], tmin: float, tmax: float) -> int:
     S = [0] * (len(A) + 1)
     for i, x in enumerate(A):
         S[i + 1] = x + S[i]
-    T = [-x for i, x in enumerate(S) if i < (len(A) // 2)]
+    T = [-x for x in S[:len(A) // 2]]
     S = S[len(A) // 2 + 1:]
     crsum = problem_a(S, T, tmin, tmax)
-    return lsum + rsum + crsum
+    return lsum + rsum + crsum 
 
-
-def main():
-    A = [-1, 1]
-    tmin, tmax = 0, 10
-    print(problem_b(A, tmin, tmax))
-    print(problem_a([-4, -4, 3], [-3, -4 , 2,0], 8, 20))
-    # print(problem_b([-3, -4, 2, 0], -4, 3))
-
-
-if __name__ == "__main__":
-    main()
+def number_of_allowable_intervals(input_file_path, output_file_path):
+    try:
+        result = None
+        with open(input_file_path, 'r') as infile:
+            lines = infile.readlines() 
+            n, tmin, tmax, *_ = [int(x) for x in lines[0].split(',')]
+            array = [int(x) for x in lines[1].split(',')[:n]]
+            result = problem_b(array, tmin, tmax)
+        with open(output_file_path, 'w') as outfile:
+            outfile.write(f'{result}\n')
+    except Exception as exception:
+        print(exception)
